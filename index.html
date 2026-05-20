@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admission Record — Canyon Vista Post-Acute</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #F7F6F2;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 32px 24px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    padding: 24px 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .status-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #1D9E75;
+    flex-shrink: 0;
+    margin-top: 20px;
+  }
+  .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .field {
+    position: relative;
+    flex: 1;
+  }
+  .field-label {
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    background: #ffffff;
+    padding: 0 6px;
+    font-size: 11px;
+    color: #6b6b6b;
+    z-index: 1;
+  }
+  .field-input {
+    border: 0.5px solid rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+  }
+  .field-input.placeholder { color: #9a9a9a; }
+  .field-input .ti { color: #6b6b6b; font-size: 18px; }
+
+  .icon-leading {
+    font-size: 18px;
+    color: #6b6b6b;
+    margin-top: 14px;
+  }
+  .with-icon { display: flex; align-items: flex-start; gap: 10px; }
+
+  .date-field { width: 200px; }
+
+  .ai-cluster {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .ai-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #E6F1FB;
+    color: #185FA5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    font-style: italic;
+  }
+  .confidence-pill {
+    border: 1px solid #1D9E75;
+    border-radius: 9999px;
+    padding: 5px 14px;
+    font-size: 13px;
+    color: #0F6E56;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
+  .confidence-pill .ti { font-size: 15px; }
+  .action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+  }
+  .action-btn .ti { font-size: 14px; }
+  .accept { background: #1D9E75; }
+  .reject { background: #E24B4A; }
+
+  .section-label {
+    font-size: 12px;
+    color: #6b6b6b;
+    margin-bottom: 6px;
+  }
+  .description-box {
+    border: 0.5px solid rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 16px 20px;
+    line-height: 1.7;
+    background: #ffffff;
+    margin-bottom: 20px;
+  }
+  .description-box div { margin-bottom: 4px; }
+  .description-box div:last-child { margin-bottom: 0; }
+
+  .nested-panel {
+    background: #F1F4F1;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  .issue-field {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .issue-field .field-label { background: #F1F4F1; }
+  .issue-field .field-input {
+    border: 1px solid #1a1a1a;
+  }
+
+  .date-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .date-grid .section-label { margin-bottom: 8px; }
+
+  .negligence-box {
+    border: 0.5px solid rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 16px 20px;
+    background: #ffffff;
+    min-height: 100px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 8px;
+  }
+  .file-ref {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #444;
+    flex: 1;
+    min-width: 0;
+  }
+  .file-ref .ti { font-size: 17px; color: #6b6b6b; }
+  .file-ref span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .page-ref {
+    position: relative;
+    width: 140px;
+  }
+  .page-ref .field-label { background: #ffffff; }
+  .page-ref .field-input {
+    padding: 10px 14px;
+    font-size: 14px;
+    min-height: auto;
+  }
+  .hard-to-read {
+    border: 1px solid #B5D4F4;
+    color: #185FA5;
+    background: #E6F1FB;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hard-to-read .ti { font-size: 16px; }
+
+  @media (max-width: 720px) {
+    body { padding: 16px 12px; }
+    .card { padding: 18px 16px; }
+    .row { flex-wrap: wrap; }
+    .date-field { width: 100%; }
+    .ai-cluster { margin-top: 4px; flex-wrap: wrap; }
+    .date-grid { grid-template-columns: 1fr; }
+    .footer { flex-wrap: wrap; }
+    .page-ref { width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="status-dot" aria-hidden="true"></div>
+
+      <div class="content">
+
+        <!-- Record type + date + AI controls -->
+        <div class="row">
+          <div class="field">
+            <label class="field-label">Record Type</label>
+            <div class="field-input">Admission Record</div>
+          </div>
+          <div class="field date-field">
+            <div class="field-input">
+              <span>01/13/2022</span>
+              <i class="ti ti-calendar" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="ai-cluster">
+            <div class="ai-badge">Ai</div>
+            <div class="confidence-pill">
+              <i class="ti ti-info-circle" aria-hidden="true"></i>
+              <span>Confidence: High</span>
+            </div>
+            <button class="action-btn accept" aria-label="Accept">
+              <i class="ti ti-check" aria-hidden="true"></i>
+            </button>
+            <button class="action-btn reject" aria-label="Reject">
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Facility -->
+        <div class="with-icon" style="margin-bottom: 16px;">
+          <i class="ti ti-building icon-leading" aria-hidden="true"></i>
+          <div class="field" style="flex:1;">
+            <label class="field-label">Facility</label>
+            <div class="field-input">Canyon Vista Post-Acute</div>
+          </div>
+        </div>
+
+        <!-- Doctor / Provider -->
+        <div class="with-icon" style="margin-bottom: 20px;">
+          <i class="ti ti-id-badge-2 icon-leading" aria-hidden="true"></i>
+          <div class="field" style="flex:1;">
+            <label class="field-label">Doctor/Provider</label>
+            <div class="field-input">Sundeep Dabra, MD; Lubna Javed, MD; John Arcay, NP; Samantha Balsomo, NP; Roger Patricio Jr., NP</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="section-label">Description</div>
+        <div class="description-box">
+          <div>- Admission Face Sheet documenting initiation of care on 01/13/2022.</div>
+          <div>- Admitted from Acute care hospital.</div>
+          <div>- Active Diagnoses established on admission: Hypertensive emergency (Primary), Pneumonia, Acute kidney failure, End stage renal disease, Angioneurotic edema, Essential (primary) hypertension, Muscle weakness (generalized), Other abnormalities of gait and mobility, Anxiety disorder, Obesity.</div>
+          <div>- No known allergies.</div>
+        </div>
+
+        <!-- Nested panel: Issue Category, dates, negligence -->
+        <div class="nested-panel">
+
+          <div class="field issue-field">
+            <label class="field-label">Issue Category</label>
+            <div class="field-input">
+              <span>Background | Chronic Illness | Acute Illness</span>
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          <div class="date-grid">
+            <div>
+              <div class="section-label">Start Effective Date</div>
+              <div class="field-input">
+                <span>01/13/2022</span>
+                <i class="ti ti-calendar" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div>
+              <div class="section-label">End Effective Date</div>
+              <div class="field-input placeholder">
+                <span>MM/DD/YYYY</span>
+                <i class="ti ti-calendar" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div>
+              <div class="section-label">Signed Date</div>
+              <div class="field-input placeholder">
+                <span>MM/DD/YYYY</span>
+                <i class="ti ti-calendar" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Negligence</div>
+          <div class="negligence-box">No negligence identified</div>
+        </div>
+
+        <!-- Footer: file, page ref, hard-to-read -->
+        <div class="footer">
+          <div class="file-ref">
+            <i class="ti ti-file-text" aria-hidden="true"></i>
+            <span>CVPA MR_00596-01389_NH records from Canyon Vista Post-Acute - redacted.pdf</span>
+          </div>
+          <div class="field page-ref">
+            <label class="field-label">Page Reference</label>
+            <div class="field-input">598-600</div>
+          </div>
+          <button class="hard-to-read">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            Hard-to-Read Pages
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
