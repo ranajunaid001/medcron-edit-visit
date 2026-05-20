@@ -66,7 +66,27 @@
   .main { flex: 1; min-width: 0; padding: 24px 32px 80px; position: relative; }
   .main.edit-mode { padding: 18px 0 0; }
 
-  .topbar { display: flex; justify-content: flex-end; margin-bottom: 14px; padding: 0 28px; }
+  .topbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 0 28px;
+  }
+  .specs-btn {
+    display: flex; align-items: center; gap: 8px;
+    border: none;
+    background: #1F8A5F;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .specs-btn:hover { background: #186B4A; }
   .legacy-btn {
     display: flex; align-items: center; gap: 8px;
     border: 1px solid #D9D9D9; background: #ffffff; border-radius: 10px;
@@ -625,6 +645,10 @@
 
       <!-- Top bar -->
       <div class="topbar">
+        <button class="specs-btn" id="specsBtn">
+          <svg class="ico" width="16" height="16"><use href="#i-clipboard"/></svg>
+          Check Design Specs
+        </button>
         <button class="legacy-btn">
           <svg class="ico" width="16" height="16"><use href="#i-arrow-left"/></svg>
           Go to Legacy View
@@ -942,10 +966,10 @@
                       <svg class="ico" width="14" height="14" style="color:#1F8A5F"><use href="#i-info"/></svg>
                       Confidence: High
                     </div>
-                    <button class="action-btn accept" id="acceptBtn" title="Accept and close">
+                    <button class="action-btn accept" id="acceptBtn" title="Accept and close" style="display:none;">
                       <svg class="ico" width="12" height="12"><use href="#i-check"/></svg>
                     </button>
-                    <button class="action-btn reject" id="rejectBtn" title="Reject and close">
+                    <button class="action-btn reject" id="rejectBtn" title="Reject and close" style="display:none;">
                       <svg class="ico" width="12" height="12"><use href="#i-x-thick"/></svg>
                     </button>
                   </div>
