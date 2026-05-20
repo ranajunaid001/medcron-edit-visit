@@ -1266,157 +1266,54 @@
       <nav class="specs-toc">
         <div class="specs-toc-title">Contents</div>
         <ol>
-          <li><a href="#summary">Summary</a></li>
-          <li><a href="#scope">Scope of changes</a></li>
+          <li><a href="#scope">What changed</a></li>
           <li><a href="#flow">Interaction flow</a></li>
-          <li><a href="#read-view">Read view</a></li>
-          <li><a href="#edit-view">Edit view</a></li>
           <li><a href="#tokens">Design tokens</a></li>
-          <li><a href="#behaviour">Behaviour notes</a></li>
         </ol>
       </nav>
 
       <div class="specs-content">
 
-        <section id="summary">
-          <h2><span class="num">01</span> Summary</h2>
-          <p>This document captures the design changes applied to the Medical Chronology screen and the rationale behind each decision. It is written for the engineers who will implement the views in production code. Examples reference the interactive prototype at the top of this page.</p>
-          <p>There are two primary states for any visit record on this screen:</p>
-          <ul>
-            <li><strong>Read view</strong> — the default. A visit card displays its extracted fields and AI confidence indicator.</li>
-            <li><strong>Edit view</strong> — opened when the user clicks the pencil icon on a visit. A split layout exposes the source PDF on the left and an editable form on the right.</li>
-          </ul>
-        </section>
-
         <section id="scope">
-          <h2><span class="num">02</span> Scope of changes</h2>
-          <h3>What was changed</h3>
+          <h2><span class="num">01</span> What changed</h2>
           <ul>
-            <li>Added the <strong>EDITING</strong> pill anchored to the top-left of the editable card so the user always knows which visit they are editing.</li>
-            <li>Removed the green check (✓) and red X (✕) icon buttons from the edit-mode header — they duplicated the Save Changes / Cancel buttons at the bottom of the form.</li>
-            <li>Converted all static field rows in the edit view into real <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements with floating labels, focus states, and a green focus ring.</li>
-            <li>Added a footer action bar inside the editable card with explicit <strong>Save Changes</strong> (primary) and <strong>Cancel</strong> (secondary) buttons.</li>
-            <li>Wired the pencil icon, the close buttons, and the SHOW DOCS / HIDE DOCS tabs to toggle between read and edit modes.</li>
-            <li>Added a <strong>Check Design Specs</strong> button in the app's top bar that brings the reader to this section.</li>
-          </ul>
-          <h3>What was NOT changed (intentionally)</h3>
-          <ul>
-            <li>Read-view card layout, including its green outline, type chip, date chip, Ai badge, and confidence pill.</li>
-            <li>Top navigation, tabs, and the "Last modified by" bar.</li>
-            <li>Toolbar (search, filters, sort, export, Add Visit).</li>
-            <li>Document panel UI on the left side of the edit view (toolbar, page navigation, sidebar icons).</li>
+            <li>Added an <strong>EDITING</strong> pill on the top-left of the editable card so the user knows which visit they're editing.</li>
+            <li>Removed the green ✓ / red ✕ buttons from the edit header — Save Changes / Cancel at the bottom cover it.</li>
+            <li>Fields in edit view are now real <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements with focus states.</li>
+            <li>Pencil icon, X on PDF, HIDE/SHOW DOCS tabs all toggle edit mode.</li>
           </ul>
         </section>
 
         <section id="flow">
-          <h2><span class="num">03</span> Interaction flow</h2>
+          <h2><span class="num">02</span> Interaction flow</h2>
+          <div class="callout">
+            <strong>Edit flow:</strong> User clicks the pencil → source PDF opens on the left, editable form on the right → user edits → clicks Save Changes → PDF and form close, returning to the read view.
+          </div>
           <table class="specs-table">
-            <thead>
-              <tr><th>Trigger</th><th>From state</th><th>To state</th><th>Side effects</th></tr>
-            </thead>
+            <thead><tr><th>Trigger</th><th>Result</th></tr></thead>
             <tbody>
-              <tr><td>Click pencil icon on a visit</td><td>Read</td><td>Edit</td><td>Form populates with the visit data. PDF panel shows the source document. EDITING pill appears on the card.</td></tr>
-              <tr><td>Click X on PDF header</td><td>Edit</td><td>Read</td><td>Discards any unsaved changes (no confirm in prototype; production should warn).</td></tr>
-              <tr><td>Click Save Changes</td><td>Edit</td><td>Read</td><td>Production: persist values, update card display, refresh "Last modified". Prototype: closes the editor.</td></tr>
-              <tr><td>Click Cancel</td><td>Edit</td><td>Read</td><td>Discards changes. Production should warn if the form is dirty.</td></tr>
-              <tr><td>Click HIDE DOCS tab</td><td>Edit</td><td>Read</td><td>Equivalent to Cancel.</td></tr>
-              <tr><td>Click SHOW DOCS tab</td><td>Read</td><td>Edit</td><td>Opens the editor for the visit currently in view.</td></tr>
+              <tr><td>Click pencil on a visit</td><td>Enter edit mode. Form populates with that visit's data.</td></tr>
+              <tr><td>Save Changes</td><td>Persist values, return to read view.</td></tr>
+              <tr><td>Cancel / X / HIDE DOCS</td><td>Discard changes, return to read view. (Production should warn if dirty.)</td></tr>
             </tbody>
           </table>
-        </section>
-
-        <section id="read-view">
-          <h2><span class="num">04</span> Read view</h2>
-          <p>A visit record is rendered as a single card with a thin green border (<code>#2BA875</code>, 1.5px). Card padding is 26px / 32px (vertical / horizontal). Border radius is 12px.</p>
-          <h3>Anatomy (top to bottom)</h3>
-          <ul>
-            <li><strong>Header row:</strong> type chip (black background, white text), date chip with calendar icon, then right-aligned cluster of Ai badge, Confidence pill, pencil icon, trash icon.</li>
-            <li><strong>Body rows</strong> with leading icon (building / id-badge) and "Label: value" content.</li>
-            <li>"Description" label followed by a bulleted list (• unicode bullets, 22px font, 1.65 line-height).</li>
-            <li>"View more" link in brand green (<code>#1F8A5F</code>).</li>
-            <li><strong>Footer</strong> separated by a 1px top border: file reference (file icon, name, "Pages: N-M"), and a right-aligned "View Details" with eye icon.</li>
-          </ul>
-          <div class="callout">
-            <strong>Why the pencil triggers edit, not the whole card:</strong> Clicking the card body is reserved for future "expand to read full record" behaviour. Edit is a destructive, focused action that demands an explicit affordance — the pencil. Same pattern as Gmail, Notion, and Linear.
-          </div>
-        </section>
-
-        <section id="edit-view">
-          <h2><span class="num">05</span> Edit view</h2>
-          <p>Layout: a split-screen with the original PDF on the left and the editable form on the right. The full-app sidebar collapses in edit mode to maximize horizontal space for both panels. The top tabs and "Medical Chron &amp; Timeline Draft" sub-tab remain visible so the user keeps navigational context.</p>
-
-          <h3>5.1 Left panel — PDF document viewer</h3>
-          <ul>
-            <li>Header with filename and an X button to close the editor.</li>
-            <li>Toolbar: first / prev / next / last page, page number input, zoom out / in, more menu.</li>
-            <li>Left rail icons: thumbnails, bookmarks, sidebar toggle.</li>
-            <li>Viewport renders the redacted PDF pages with shadow + 1px border per page.</li>
-            <li>Vertical <strong>HIDE DOCS</strong> tab on the right edge of this panel closes the editor.</li>
-          </ul>
-
-          <h3>5.2 Right panel — editable form</h3>
-          <p>The card uses a subtle green tint (<code>rgba(43,168,117,0.04)</code>) and a 14px top margin. The <strong>EDITING</strong> pill is absolutely positioned at <code>top: -12px; left: 18px</code> — sitting on the card's rounded top-left corner, above the first field's floating label.</p>
-          <p><strong>EDITING pill specs:</strong></p>
-          <ul>
-            <li>Background: <code>#2BA875</code></li>
-            <li>Text: white uppercase, 11px / weight 700 / letter-spacing 0.8px</li>
-            <li>Padding: 4px 12px</li>
-            <li>Border radius: 9999px (fully rounded)</li>
-            <li>Shadow: <code>0 2px 6px rgba(43,168,117,0.35)</code></li>
-          </ul>
-
-          <h3>Form fields (top to bottom)</h3>
-          <ul>
-            <li><strong>Record Type</strong> — text input. Max-width 260px.</li>
-            <li><strong>Date</strong> — text input with right-aligned calendar icon. Width 200px. <em>Production: replace with a date picker.</em></li>
-            <li><strong>Ai badge + Confidence pill</strong> (read-only, AI metadata).</li>
-            <li><strong>Facility</strong> — text input with leading building icon.</li>
-            <li><strong>Doctor / Provider</strong> — text input with leading id-badge icon.</li>
-            <li><strong>Description</strong> — multi-line textarea, min 220px, max 360px, vertical resize allowed.</li>
-            <li><strong>Page Reference</strong> — compact text input (130px wide).</li>
-            <li><strong>Footer action bar</strong> — Save Changes (primary, green) and Cancel (secondary, white outline).</li>
-          </ul>
         </section>
 
         <section id="tokens">
-          <h2><span class="num">06</span> Design tokens</h2>
-          <p>Use these values as the source of truth. They are duplicated in the prototype CSS and should be lifted into the design-system file when implemented.</p>
+          <h2><span class="num">03</span> Design tokens</h2>
           <table class="specs-table">
             <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
             <tbody>
-              <tr><td><span class="swatch" style="background:#1F8A5F"></span>Brand green (primary)</td><td><code>#1F8A5F</code></td><td>Tabs, links, "Save Changes" button, active states.</td></tr>
-              <tr><td><span class="swatch" style="background:#2BA875"></span>Brand green (accent)</td><td><code>#2BA875</code></td><td>Card borders, EDITING pill, timeline dot.</td></tr>
-              <tr><td><span class="swatch" style="background:rgba(43,168,117,0.04)"></span>Green tint</td><td><code>rgba(43,168,117,0.04)</code></td><td>Edit card subtle background.</td></tr>
-              <tr><td><span class="swatch" style="background:rgba(43,168,117,0.15)"></span>Focus ring</td><td><code>rgba(43,168,117,0.15)</code> — 3px outer shadow</td><td>Input / textarea focus state.</td></tr>
-              <tr><td><span class="swatch" style="background:#222222"></span>Dark text</td><td><code>#222222</code></td><td>Primary body text.</td></tr>
-              <tr><td><span class="swatch" style="background:#6b6b6b"></span>Secondary text</td><td><code>#6b6b6b</code></td><td>Labels, "Last modified by", icon defaults.</td></tr>
-              <tr><td><span class="swatch" style="background:#D9D9D9"></span>Border default</td><td><code>#D9D9D9</code></td><td>Input borders.</td></tr>
-              <tr><td><span class="swatch" style="background:#E5E5E5"></span>Border faint</td><td><code>#E5E5E5</code> / <code>#ECECEC</code></td><td>Section dividers, card outlines in neutral state.</td></tr>
-              <tr><td><span class="swatch" style="background:#F4F4F2"></span>Background tinted</td><td><code>#F4F4F2</code></td><td>"Last modified" bar and view-toggle tray.</td></tr>
-              <tr><td><span class="swatch" style="background:#3B82F6"></span>Accent blue (Ai)</td><td><code>#3B82F6</code></td><td>Ai italic badge and decorative star.</td></tr>
-              <tr><td><span class="swatch" style="background:#E85D4E"></span>Destructive</td><td><code>#E85D4E</code></td><td>Trash icon, reject button.</td></tr>
+              <tr><td><span class="swatch" style="background:#1F8A5F"></span>Brand green</td><td><code>#1F8A5F</code></td><td>Tabs, links, Save button.</td></tr>
+              <tr><td><span class="swatch" style="background:#2BA875"></span>Accent green</td><td><code>#2BA875</code></td><td>Card border, EDITING pill, timeline dot.</td></tr>
+              <tr><td><span class="swatch" style="background:#3B82F6"></span>AI blue</td><td><code>#3B82F6</code></td><td>Ai badge.</td></tr>
+              <tr><td><span class="swatch" style="background:#E85D4E"></span>Destructive</td><td><code>#E85D4E</code></td><td>Trash icon.</td></tr>
+              <tr><td><span class="swatch" style="background:#D9D9D9"></span>Border</td><td><code>#D9D9D9</code></td><td>Input borders.</td></tr>
             </tbody>
           </table>
-          <h3>Type &amp; spacing</h3>
           <ul>
-            <li><strong>Font:</strong> system stack. Engineers should map this to the existing app token if one exists.</li>
-            <li><strong>Base size:</strong> 14px. Card body: 15px. Floating labels: 11px. Section labels: 12–15px.</li>
-            <li><strong>Border radius:</strong> 10px on inputs / buttons / toolbar items; 12px on cards; 9999px on pills.</li>
-            <li><strong>Box shadow:</strong> on the EDITING pill only — <code>0 2px 6px rgba(43,168,117,0.35)</code>. No shadows on cards or inputs in default state.</li>
-          </ul>
-        </section>
-
-        <section id="behaviour">
-          <h2><span class="num">07</span> Behaviour notes for production</h2>
-          <ul>
-            <li><strong>Dirty-state detection:</strong> track whether any input value differs from its initial value. When dirty and the user attempts to Cancel / close the PDF / HIDE DOCS, show a confirm modal ("Discard unsaved changes?").</li>
-            <li><strong>Save flow:</strong> validate required fields (Record Type, Date, Facility, Provider), POST the diff to the backend, optimistically update the card in the list, refresh "Last modified by" and timestamp.</li>
-            <li><strong>Concurrency:</strong> if another user has edited the same record between read and save, the API should return a conflict and the UI should surface a "This record was updated by {user}" warning with a refresh option.</li>
-            <li><strong>Date input:</strong> use the existing in-house date-picker component (not the native browser one) so styling matches.</li>
-            <li><strong>Description field:</strong> production should support paste-from-PDF cleanup (strip page numbers / repeated headers / soft-hyphen line breaks). Out of scope for this design pass.</li>
-            <li><strong>Keyboard:</strong> <code>Esc</code> cancels (with dirty confirm if needed). <code>Cmd/Ctrl+S</code> triggers Save Changes. Tab order: Record Type → Date → Facility → Provider → Description → Page Reference → Save → Cancel.</li>
-            <li><strong>Accessibility:</strong> every input has an associated label. Icons are decorative SVGs marked <code>aria-hidden</code>. Icon-only buttons (pencil, trash, close) carry <code>aria-label</code>s and tooltips.</li>
-            <li><strong>Mobile / narrow viewport:</strong> at <code>&lt;1100px</code> the split becomes stacked (PDF above form). At <code>&lt;760px</code> the toolbar wraps and the SHOW/HIDE DOCS rail is hidden.</li>
+            <li>Border radius: 10px (inputs / buttons), 12px (cards), 9999px (pills).</li>
+            <li>Focus ring: <code>rgba(43,168,117,0.15)</code>, 3px outer shadow.</li>
           </ul>
         </section>
 
