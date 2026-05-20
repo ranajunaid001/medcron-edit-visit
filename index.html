@@ -179,6 +179,26 @@
     display: flex; align-items: flex-start; gap: 22px;
     position: relative; margin-left: 60px;
   }
+  .visit-list {
+    position: relative;
+    padding-bottom: 12px;
+  }
+  .visit-list::before {
+    content: "";
+    position: absolute;
+    left: 60px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(43,168,117,0.4), rgba(43,168,117,0.15));
+    z-index: 0;
+  }
+  .visit-list .card-row {
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .visit-list .card-row:last-child { margin-bottom: 0; }
   .timeline-dot {
     width: 18px; height: 18px; border-radius: 50%;
     border: 2px solid #2BA875; background: #ffffff;
@@ -710,7 +730,10 @@
 
         <div class="show-docs-tab" id="showDocsBtn">SHOW DOCS</div>
 
-        <div class="card-row">
+        <div class="visit-list">
+
+        <!-- Visit 1 -->
+        <div class="card-row" data-visit-name="Doctor's Office Record" data-visit-date="09/21/2021">
           <div class="timeline-dot"></div>
           <div class="record-card">
 
@@ -726,7 +749,7 @@
                   <svg class="ico" width="16" height="16" style="color:#1F8A5F"><use href="#i-info"/></svg>
                   Confidence: High
                 </div>
-                <button class="icon-btn edit" id="editBtn" title="Edit">
+                <button class="icon-btn edit edit-btn" title="Edit">
                   <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
                 </button>
                 <button class="icon-btn delete" title="Delete">
@@ -739,7 +762,6 @@
               <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
               <div><span class="row-label">Facility:</span> Naturo-Medical Health Care, P.C.</div>
             </div>
-
             <div class="body-row">
               <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
               <div><span class="row-label">Provider:</span> Tsai C. Chao, MD</div>
@@ -750,11 +772,8 @@
               <li><span class="bullet-label">chief complaint:</span> Acute onset of lower back, left buttock, hip, right knee, and left leg pain with impaired walking after an automobile accident.</li>
               <li><span class="bullet-label">history of present illness:</span> Patient reports pain in lower back, left buttock, left hip, right knee, and left leg. Previous evaluation included right knee X-ray showing no fracture or dislocation, with advice for pain management.</li>
               <li><span class="bullet-label">vitals:</span> BP 104/80, HR 75, Respiration 17.</li>
-              <li><span class="bullet-label">clinical narrative:</span> Lower back exam shows midline deformity, tenderness, muscle spasm, and sacroiliac joint tenderness. Positive Faber-Patrick and straight leg elevation tests on the left. Neurological exam reveals decreased muscle strength and sensation in the left leg and foot. Left hip exam shows severe tenderness. Right knee exam reveals crepitus, swelling, tenderness, and positive McMurray's sign. Healing abrasion on the left leg. Right knee X-ray shows no acute injury.</li>
-              <li><span class="bullet-label">assessment:</span> 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4. Left hip joint sprain. 5. Right knee contusion/sprain. 6. Left leg soft tissue contusion. 7. Impaired walking.</li>
-              <li><span class="bullet-label">treatment/plan:</span> Lumbar spine X-ray requested. Left hip and right knee X-ray and MRI ordered. Home heating pad advised. Prescribed Mobic and Lidoderm patch. Physical therapy ordered,...</li>
+              <li><span class="bullet-label">assessment:</span> 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4. Left hip joint sprain. 5. Right knee contusion/sprain.</li>
             </ul>
-
             <div class="view-more">View more</div>
 
             <div class="card-foot">
@@ -771,6 +790,242 @@
             </div>
           </div>
         </div>
+
+        <!-- Visit 2 -->
+        <div class="card-row" data-visit-name="Radiology Report" data-visit-date="10/05/2021">
+          <div class="timeline-dot"></div>
+          <div class="record-card">
+
+            <div class="rec-header">
+              <div class="type-chip">Radiology Report</div>
+              <div class="date-chip">
+                <svg class="ico" width="18" height="18"><use href="#i-calendar"/></svg>
+                10/05/2021
+              </div>
+              <div class="rec-actions">
+                <span class="ai-badge">Ai</span>
+                <div class="confidence-pill">
+                  <svg class="ico" width="16" height="16" style="color:#1F8A5F"><use href="#i-info"/></svg>
+                  Confidence: High
+                </div>
+                <button class="icon-btn edit edit-btn" title="Edit">
+                  <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
+                </button>
+                <button class="icon-btn delete" title="Delete">
+                  <svg class="ico" width="19" height="19"><use href="#i-trash"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
+              <div><span class="row-label">Facility:</span> Manhattan Imaging Center</div>
+            </div>
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
+              <div><span class="row-label">Provider:</span> Daniel R. Park, MD</div>
+            </div>
+
+            <div class="desc-label">Description</div>
+            <ul class="bullet-list">
+              <li><span class="bullet-label">study:</span> MRI lumbar spine without contrast.</li>
+              <li><span class="bullet-label">findings:</span> Mild disc bulge at L4-L5 with annular tear. No central canal stenosis. Mild bilateral neural foraminal narrowing. No focal disc herniation.</li>
+              <li><span class="bullet-label">impression:</span> Degenerative disc changes at L4-L5 most likely contributing to patient's symptoms.</li>
+            </ul>
+            <div class="view-more">View more</div>
+
+            <div class="card-foot">
+              <div class="file-ref">
+                <svg class="ico" width="17" height="17"><use href="#i-file"/></svg>
+                MRI_Lumbar_10052021.pdf
+                <span class="pages-label">Pages:</span>
+                <span class="pages-val">1-2</span>
+              </div>
+              <div class="view-details">
+                <svg class="ico" width="18" height="18"><use href="#i-eye"/></svg>
+                View Details
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visit 3 -->
+        <div class="card-row" data-visit-name="Physical Therapy Note" data-visit-date="10/18/2021">
+          <div class="timeline-dot"></div>
+          <div class="record-card">
+
+            <div class="rec-header">
+              <div class="type-chip">Physical Therapy Note</div>
+              <div class="date-chip">
+                <svg class="ico" width="18" height="18"><use href="#i-calendar"/></svg>
+                10/18/2021
+              </div>
+              <div class="rec-actions">
+                <span class="ai-badge">Ai</span>
+                <div class="confidence-pill" style="border-color:#E89D2B; color:#B5760D;">
+                  <svg class="ico" width="16" height="16" style="color:#B5760D"><use href="#i-info"/></svg>
+                  Confidence: Medium
+                </div>
+                <button class="icon-btn edit edit-btn" title="Edit">
+                  <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
+                </button>
+                <button class="icon-btn delete" title="Delete">
+                  <svg class="ico" width="19" height="19"><use href="#i-trash"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
+              <div><span class="row-label">Facility:</span> Riverside Physical Therapy</div>
+            </div>
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
+              <div><span class="row-label">Provider:</span> Maria Gonzalez, DPT</div>
+            </div>
+
+            <div class="desc-label">Description</div>
+            <ul class="bullet-list">
+              <li><span class="bullet-label">subjective:</span> Patient reports persistent lower back pain rated 6/10. Pain worsens with prolonged sitting and bending.</li>
+              <li><span class="bullet-label">objective:</span> Limited lumbar flexion. Tenderness over L4-L5 paraspinals. Strength 4/5 in left hip flexors.</li>
+              <li><span class="bullet-label">plan:</span> Continue PT 2x/week for 4 weeks. Home exercise program emphasizing core stabilization and stretching.</li>
+            </ul>
+            <div class="view-more">View more</div>
+
+            <div class="card-foot">
+              <div class="file-ref">
+                <svg class="ico" width="17" height="17"><use href="#i-file"/></svg>
+                PT_Note_10182021.pdf
+                <span class="pages-label">Pages:</span>
+                <span class="pages-val">1</span>
+              </div>
+              <div class="view-details">
+                <svg class="ico" width="18" height="18"><use href="#i-eye"/></svg>
+                View Details
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visit 4 -->
+        <div class="card-row" data-visit-name="Orthopedic Consultation" data-visit-date="11/12/2021">
+          <div class="timeline-dot"></div>
+          <div class="record-card">
+
+            <div class="rec-header">
+              <div class="type-chip">Orthopedic Consultation</div>
+              <div class="date-chip">
+                <svg class="ico" width="18" height="18"><use href="#i-calendar"/></svg>
+                11/12/2021
+              </div>
+              <div class="rec-actions">
+                <span class="ai-badge">Ai</span>
+                <div class="confidence-pill">
+                  <svg class="ico" width="16" height="16" style="color:#1F8A5F"><use href="#i-info"/></svg>
+                  Confidence: High
+                </div>
+                <button class="icon-btn edit edit-btn" title="Edit">
+                  <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
+                </button>
+                <button class="icon-btn delete" title="Delete">
+                  <svg class="ico" width="19" height="19"><use href="#i-trash"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
+              <div><span class="row-label">Facility:</span> NYC Orthopedics &amp; Sports Medicine</div>
+            </div>
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
+              <div><span class="row-label">Provider:</span> Robert H. Liang, MD</div>
+            </div>
+
+            <div class="desc-label">Description</div>
+            <ul class="bullet-list">
+              <li><span class="bullet-label">chief complaint:</span> Continued right knee pain and lumbar discomfort following MVA in September 2021.</li>
+              <li><span class="bullet-label">examination:</span> Right knee with positive McMurray's sign. Lumbar range of motion limited. No neurological deficits noted.</li>
+              <li><span class="bullet-label">recommendation:</span> Continue conservative management. Consider arthroscopy if symptoms persist beyond 8 weeks of PT.</li>
+            </ul>
+            <div class="view-more">View more</div>
+
+            <div class="card-foot">
+              <div class="file-ref">
+                <svg class="ico" width="17" height="17"><use href="#i-file"/></svg>
+                Ortho_Consult_11122021.pdf
+                <span class="pages-label">Pages:</span>
+                <span class="pages-val">1-2</span>
+              </div>
+              <div class="view-details">
+                <svg class="ico" width="18" height="18"><use href="#i-eye"/></svg>
+                View Details
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visit 5 -->
+        <div class="card-row" data-visit-name="Pain Management Follow-up" data-visit-date="12/03/2021">
+          <div class="timeline-dot"></div>
+          <div class="record-card">
+
+            <div class="rec-header">
+              <div class="type-chip">Pain Management Follow-up</div>
+              <div class="date-chip">
+                <svg class="ico" width="18" height="18"><use href="#i-calendar"/></svg>
+                12/03/2021
+              </div>
+              <div class="rec-actions">
+                <span class="ai-badge">Ai</span>
+                <div class="confidence-pill">
+                  <svg class="ico" width="16" height="16" style="color:#1F8A5F"><use href="#i-info"/></svg>
+                  Confidence: High
+                </div>
+                <button class="icon-btn edit edit-btn" title="Edit">
+                  <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
+                </button>
+                <button class="icon-btn delete" title="Delete">
+                  <svg class="ico" width="19" height="19"><use href="#i-trash"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
+              <div><span class="row-label">Facility:</span> Empire Pain Management</div>
+            </div>
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
+              <div><span class="row-label">Provider:</span> Anita Sharma, MD</div>
+            </div>
+
+            <div class="desc-label">Description</div>
+            <ul class="bullet-list">
+              <li><span class="bullet-label">interval history:</span> Patient reports moderate improvement with PT and current medication regimen. Pain now 4/10.</li>
+              <li><span class="bullet-label">medications:</span> Continued Mobic 15mg daily. Discontinued Lidoderm patch.</li>
+              <li><span class="bullet-label">procedure:</span> Lumbar trigger point injection performed without complication.</li>
+              <li><span class="bullet-label">follow-up:</span> Return in 6 weeks or sooner if symptoms worsen.</li>
+            </ul>
+            <div class="view-more">View more</div>
+
+            <div class="card-foot">
+              <div class="file-ref">
+                <svg class="ico" width="17" height="17"><use href="#i-file"/></svg>
+                Pain_Mgmt_12032021.pdf
+                <span class="pages-label">Pages:</span>
+                <span class="pages-val">1-3</span>
+              </div>
+              <div class="view-details">
+                <svg class="ico" width="18" height="18"><use href="#i-eye"/></svg>
+                View Details
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+        <!-- ============== END VISIT LIST ============== -->
 
       </div>
       <!-- ============== END READ VIEW ============== -->
@@ -1004,12 +1259,43 @@
 
 <script>
   const body = document.body;
-  const editBtn = document.getElementById('editBtn');
+  const editButtons = document.querySelectorAll('.edit-btn');
   const pdfCloseBtn = document.getElementById('pdfCloseBtn');
   const acceptBtn = document.getElementById('acceptBtn');
   const rejectBtn = document.getElementById('rejectBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
 
-  function enterEdit() {
+  // Form refs (edit panel)
+  const editRecordType = document.querySelector('.edit-card .form-row .text-input');
+  const editDateInput = document.querySelector('.edit-card .input-with-icon .text-input-with-icon');
+  const editFacility = document.querySelectorAll('.edit-card .icon-row .text-input')[0];
+  const editProvider = document.querySelectorAll('.edit-card .icon-row .text-input')[1];
+  const editDescription = document.querySelector('.edit-card .desc-textarea');
+  const editPageRef = document.querySelector('.edit-card .page-ref .text-input');
+  const pdfTitle = document.querySelector('.pdf-title');
+
+  function enterEdit(card) {
+    // Pull data from the clicked visit card
+    if (card) {
+      const recordType = card.dataset.visitName || '';
+      const visitDate = card.dataset.visitDate || '';
+      const facility = card.querySelector('.body-row:nth-of-type(1) > div')?.textContent.replace(/^\s*Facility:\s*/,'').trim() || '';
+      const provider = card.querySelector('.body-row:nth-of-type(2) > div')?.textContent.replace(/^\s*Provider:\s*/,'').trim() || '';
+      const bullets = card.querySelectorAll('.bullet-list li');
+      const description = Array.from(bullets).map(li => '-' + li.textContent.trim()).join('\n');
+      const fileName = card.querySelector('.file-ref')?.childNodes[2]?.textContent?.trim() || '';
+      const pages = card.querySelector('.pages-val')?.textContent?.trim() || '';
+
+      editRecordType.value = recordType;
+      editDateInput.value = visitDate;
+      editFacility.value = facility;
+      editProvider.value = provider;
+      editDescription.value = description;
+      editPageRef.value = pages;
+      if (pdfTitle && fileName) pdfTitle.textContent = fileName;
+    }
+
     body.classList.add('mode-edit');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1018,18 +1304,27 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  editBtn.addEventListener('click', enterEdit);
+  editButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card-row');
+      enterEdit(card);
+    });
+  });
+
   pdfCloseBtn.addEventListener('click', exitEdit);
   acceptBtn.addEventListener('click', exitEdit);
   rejectBtn.addEventListener('click', exitEdit);
-  document.getElementById('saveBtn').addEventListener('click', exitEdit);
-  document.getElementById('cancelBtn').addEventListener('click', exitEdit);
+  saveBtn.addEventListener('click', exitEdit);
+  cancelBtn.addEventListener('click', exitEdit);
 
-  // Hide docs button collapses the PDF panel; show docs in read mode re-opens edit
+  // Hide docs button collapses the PDF panel; show docs in read mode re-opens edit on the first visit
   const hideDocsBtn = document.getElementById('hideDocsBtn');
   const showDocsBtn = document.getElementById('showDocsBtn');
   hideDocsBtn.addEventListener('click', exitEdit);
-  showDocsBtn.addEventListener('click', enterEdit);
+  showDocsBtn.addEventListener('click', () => {
+    const firstCard = document.querySelector('.card-row');
+    enterEdit(firstCard);
+  });
 </script>
 
 </body>
