@@ -358,8 +358,32 @@
     width: 16px; height: 16px; border-radius: 50%;
     border: 2px solid #2BA875; background: #ffffff;
     flex-shrink: 0; margin-top: 28px;
+    box-shadow: 0 0 0 4px rgba(43,168,117,0.18);
   }
-  .edit-card { flex: 1; min-width: 0; }
+  .edit-card {
+    flex: 1; min-width: 0;
+    border-left: 4px solid #2BA875;
+    background: linear-gradient(90deg, rgba(43,168,117,0.06) 0%, rgba(43,168,117,0) 280px);
+    border-radius: 10px;
+    padding: 18px 18px 18px 22px;
+    box-shadow: 0 0 0 1px rgba(43,168,117,0.25), 0 6px 24px -8px rgba(43,168,117,0.25);
+    position: relative;
+  }
+  .edit-card::before {
+    content: "Editing";
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: #2BA875;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 6px rgba(43,168,117,0.35);
+  }
 
   .form-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
   .field { position: relative; flex: 1; }
@@ -375,6 +399,93 @@
   }
   .field-input .cal { color: #9a9a9a; }
   .date-field-wrap { width: 200px; flex: 0 0 200px; }
+
+  /* Real editable inputs in edit mode */
+  .text-input, .text-input-with-icon {
+    width: 100%;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #222;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-height: 46px;
+  }
+  .text-input:focus, .text-input-with-icon:focus, .desc-textarea:focus {
+    border-color: #2BA875;
+    box-shadow: 0 0 0 3px rgba(43,168,117,0.15);
+  }
+  .input-with-icon {
+    position: relative;
+  }
+  .input-with-icon .text-input-with-icon { padding-right: 42px; }
+  .input-with-icon .icon-right {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9a9a9a;
+    pointer-events: none;
+  }
+  .edit-side .field-label {
+    background: linear-gradient(to bottom, #ffffff 0%, #ffffff 50%, #ffffff 100%);
+  }
+
+  .desc-textarea {
+    width: 100%;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #222;
+    font-family: inherit;
+    background: #ffffff;
+    outline: none;
+    resize: vertical;
+    min-height: 220px;
+    max-height: 360px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  /* Save / cancel bar */
+  .save-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #ECECEC;
+  }
+  .save-btn {
+    background: #1F8A5F;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .save-btn:hover { background: #186B4A; }
+  .cancel-btn {
+    background: #ffffff;
+    color: #4a4a4a;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cancel-btn:hover { background: #F4F4F2; }
 
   .ai-cluster { display: flex; align-items: center; gap: 8px; margin-top: 6px; margin-left: auto; }
   .edit-side .ai-badge { font-size: 18px; }
@@ -816,12 +927,12 @@
                 <div class="form-row">
                   <div class="field" style="max-width: 260px;">
                     <label class="field-label">Record Type</label>
-                    <div class="field-input">Doctor's Office Rec...</div>
+                    <input type="text" class="text-input" value="Doctor's Office Record">
                   </div>
                   <div class="field date-field-wrap">
-                    <div class="field-input">
-                      <span>09/21/2021</span>
-                      <svg class="ico cal" width="18" height="18"><use href="#i-calendar"/></svg>
+                    <div class="input-with-icon">
+                      <input type="text" class="text-input-with-icon" value="09/21/2021">
+                      <svg class="ico icon-right" width="18" height="18"><use href="#i-calendar"/></svg>
                     </div>
                   </div>
                   <div class="ai-cluster">
@@ -843,7 +954,7 @@
                   <svg class="ico icon-leading" width="18" height="18"><use href="#i-building"/></svg>
                   <div class="field">
                     <label class="field-label">Facility</label>
-                    <div class="field-input">Naturo-Medical Health Care, P.C.</div>
+                    <input type="text" class="text-input" value="Naturo-Medical Health Care, P.C.">
                   </div>
                 </div>
 
@@ -851,27 +962,34 @@
                   <svg class="ico icon-leading" width="18" height="18"><use href="#i-id-badge"/></svg>
                   <div class="field">
                     <label class="field-label">Doctor/Provider</label>
-                    <div class="field-input">Tsai C. Chao, MD</div>
+                    <input type="text" class="text-input" value="Tsai C. Chao, MD">
                   </div>
                 </div>
 
                 <div class="edit-desc-label">Description</div>
-                <div class="desc-box">
-                  <div>-chief complaint: Acute onset of lower back, left buttock, hip, right knee, and left leg pain with impaired walking after an automobile accident.</div>
-                  <div>-history of present illness: Patient reports pain in lower back, left buttock, left hip, right knee, and left leg. Previous evaluation included right knee X-ray showing no fracture or dislocation, with advice for pain management.</div>
-                  <div>-vitals: BP 104/80, HR 75, Respiration 17.</div>
-                  <div>-clinical narrative: Lower back exam shows midline deformity, tenderness, muscle spasm, and sacroiliac joint tenderness. Positive Faber-Patrick and straight leg elevation tests on the left. Neurological exam reveals decreased muscle strength and sensation in the left leg and foot. Left hip exam shows severe tenderness. Right knee exam reveals crepitus, swelling, tenderness, and positive McMurray's sign. Healing abrasion on the left leg. Right knee X-ray shows no acute injury.</div>
-                  <div>-assessment: 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4.</div>
-                </div>
+                <textarea class="desc-textarea" spellcheck="false">-chief complaint: Acute onset of lower back, left buttock, hip, right knee, and left leg pain with impaired walking after an automobile accident.
+-history of present illness: Patient reports pain in lower back, left buttock, left hip, right knee, and left leg. Previous evaluation included right knee X-ray showing no fracture or dislocation, with advice for pain management.
+-vitals: BP 104/80, HR 75, Respiration 17.
+-clinical narrative: Lower back exam shows midline deformity, tenderness, muscle spasm, and sacroiliac joint tenderness. Positive Faber-Patrick and straight leg elevation tests on the left. Neurological exam reveals decreased muscle strength and sensation in the left leg and foot. Left hip exam shows severe tenderness. Right knee exam reveals crepitus, swelling, tenderness, and positive McMurray's sign. Healing abrasion on the left leg. Right knee X-ray shows no acute injury.
+-assessment: 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4. Left hip joint sprain. 5. Right knee contusion/sprain. 6. Left leg soft tissue contusion. 7. Impaired walking.
+-treatment/plan: Lumbar spine X-ray requested. Left hip and right knee X-ray and MRI ordered. Home heating pad advised. Prescribed Mobic and Lidoderm patch. Physical therapy ordered.</textarea>
 
                 <div class="page-ref-row">
                   <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a4a4a;">
                     <svg class="ico" width="15" height="15" style="color:#6b6b6b"><use href="#i-file"/></svg>
                   </div>
-                  <div class="field page-ref">
+                  <div class="field page-ref" style="width: 130px;">
                     <label class="field-label">Page Reference</label>
-                    <div class="field-input">1-3</div>
+                    <input type="text" class="text-input" value="1-3" style="padding: 9px 12px; min-height: auto; font-size: 13px;">
                   </div>
+                </div>
+
+                <div class="save-bar">
+                  <button class="cancel-btn" id="cancelBtn">Cancel</button>
+                  <button class="save-btn" id="saveBtn">
+                    <svg class="ico" width="16" height="16"><use href="#i-check"/></svg>
+                    Save Changes
+                  </button>
                 </div>
 
               </div>
@@ -906,6 +1024,8 @@
   pdfCloseBtn.addEventListener('click', exitEdit);
   acceptBtn.addEventListener('click', exitEdit);
   rejectBtn.addEventListener('click', exitEdit);
+  document.getElementById('saveBtn').addEventListener('click', exitEdit);
+  document.getElementById('cancelBtn').addEventListener('click', exitEdit);
 
   // Hide docs button collapses the PDF panel; show docs in read mode re-opens edit
   const hideDocsBtn = document.getElementById('hideDocsBtn');
