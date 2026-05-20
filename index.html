@@ -3,360 +3,916 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admission Record — Canyon Vista Post-Acute</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<title>Medical Chronology — Anytime AI</title>
 <style>
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: #F7F6F2;
-    color: #1a1a1a;
-    margin: 0;
-    padding: 32px 24px;
+    background: #ffffff;
+    color: #222;
     font-size: 14px;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
-  .page {
-    max-width: 1080px;
-    margin: 0 auto;
-  }
-  .card {
-    background: #ffffff;
-    border-radius: 12px;
-    border: 0.5px solid rgba(0,0,0,0.12);
-    padding: 24px 28px;
+  svg { display: block; }
+  .ico { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+  button { font-family: inherit; }
+
+  /* ===== App shell ===== */
+  .app { display: flex; min-height: 100vh; }
+
+  /* ===== Sidebar (read view only) ===== */
+  .sidebar {
+    width: 100px;
+    border-right: 1px solid #ECECEC;
+    padding: 22px 0 18px;
     display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-  .status-dot {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid #1D9E75;
+    flex-direction: column;
+    align-items: center;
     flex-shrink: 0;
-    margin-top: 20px;
+    background: #ffffff;
   }
-  .content {
-    flex: 1;
-    min-width: 0;
+  .sidebar.hidden { display: none; }
+  .logo { margin-bottom: 24px; text-align: center; }
+  .logo-mark { color: #2A2D8F; font-weight: 800; font-size: 24px; line-height: 1; letter-spacing: -1px; }
+  .logo-mark .i-accent { color: #1F8A5F; }
+  .logo-sub { font-size: 8px; color: #2A2D8F; letter-spacing: 0.6px; margin-top: 3px; font-weight: 600; }
+  .nav-item {
+    width: 100%; padding: 14px 8px; text-align: center; cursor: pointer;
+    color: #4a4a4a; font-size: 12px; font-weight: 500;
+    border-left: 3px solid transparent; border-right: 3px solid transparent;
+    line-height: 1.3;
   }
-
-  .row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    margin-bottom: 16px;
-  }
-  .field {
+  .nav-item .ico { margin-bottom: 5px; color: #4a4a4a; }
+  .nav-item.active { background: #EAF6EE; color: #1F8A5F; border-left-color: #1F8A5F; }
+  .nav-item.active .ico { color: #1F8A5F; }
+  .sidebar-spacer { flex: 1; }
+  .account {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 10px 8px; margin-bottom: 14px; font-size: 12px; color: #4a4a4a;
     position: relative;
-    flex: 1;
   }
-  .field-label {
-    position: absolute;
-    top: -8px;
-    left: 12px;
-    background: #ffffff;
-    padding: 0 6px;
-    font-size: 11px;
-    color: #6b6b6b;
-    z-index: 1;
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid #D0D0D0;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; color: #555; font-weight: 600; font-size: 13px;
   }
-  .field-input {
-    border: 0.5px solid rgba(0,0,0,0.25);
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 14px;
-    background: #ffffff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 44px;
-  }
-  .field-input.placeholder { color: #9a9a9a; }
-  .field-input .ti { color: #6b6b6b; font-size: 18px; }
+  .free-tag { position: absolute; top: 6px; right: 14px; font-size: 10px; color: #6b6b6b; }
 
-  .icon-leading {
-    font-size: 18px;
-    color: #6b6b6b;
-    margin-top: 14px;
-  }
-  .with-icon { display: flex; align-items: flex-start; gap: 10px; }
+  /* ===== Main column ===== */
+  .main { flex: 1; min-width: 0; padding: 24px 32px 80px; position: relative; }
+  .main.edit-mode { padding: 18px 0 0; }
 
-  .date-field { width: 200px; }
-
-  .ai-cluster {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
+  .topbar { display: flex; justify-content: flex-end; margin-bottom: 14px; padding: 0 28px; }
+  .legacy-btn {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid #D9D9D9; background: #ffffff; border-radius: 10px;
+    padding: 8px 14px; font-size: 14px; font-weight: 600; color: #222; cursor: pointer;
   }
+
+  /* Tabs row */
+  .tabs {
+    display: flex; align-items: center; gap: 22px;
+    border-bottom: 1px solid #ECECEC; padding: 0 4px; margin-bottom: 36px;
+  }
+  .main.edit-mode .tabs { padding: 0 28px; margin-bottom: 0; }
+  .nh-chip { display: flex; align-items: center; gap: 10px; padding: 4px 6px 14px; font-weight: 500; font-size: 14px; }
+  .briefcase {
+    width: 30px; height: 30px; background: #1F8A5F; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+  .share-btn {
+    border: 1px solid #1F8A5F; color: #1F8A5F; background: #ffffff;
+    border-radius: 9999px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px; cursor: pointer; margin-left: 4px;
+  }
+  .tab-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 4px 14px; font-size: 14px; color: #222; font-weight: 500;
+    cursor: pointer; position: relative;
+  }
+  .teddy-avatar {
+    width: 28px; height: 28px; border-radius: 50%; background: #D9C7B5;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .tab-chip.active { color: #1F8A5F; font-weight: 600; }
+  .tab-chip.active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: #1F8A5F;
+  }
+  .tab-icon-square {
+    width: 26px; height: 26px; border-radius: 7px;
+    border: 1.5px solid #1F8A5F; display: flex; align-items: center; justify-content: center; color: #1F8A5F;
+  }
+  .tab-close { color: #6b6b6b; margin-left: 4px; cursor: pointer; }
+
+  /* ============================================== */
+  /* ============ READ VIEW LAYOUT ================ */
+  /* ============================================== */
+
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  }
+  .seg-tabs { display: flex; gap: 28px; align-items: center; }
+  .seg-tab { font-size: 18px; font-weight: 600; color: #6b6b6b; cursor: pointer; padding-bottom: 4px; }
+  .seg-tab.active { color: #1F8A5F; }
+  .version-btns { display: flex; gap: 14px; }
+  .ver-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #ffffff; border: 1px solid #E5E5E5; border-radius: 10px;
+    padding: 9px 18px; font-size: 14px; font-weight: 500; color: #9a9a9a; cursor: pointer;
+  }
+
+  .modified-bar {
+    background: #F4F4F2; border-radius: 10px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: #4a4a4a; margin-bottom: 26px;
+  }
+  .modified-bar .label { color: #6b6b6b; }
+  .modified-bar .value { color: #222; font-weight: 500; }
+  .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: #C0C0C0; margin: 0 6px; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 30px; flex-wrap: wrap;
+  }
+  .view-toggle { display: inline-flex; background: #F4F4F2; border-radius: 10px; padding: 4px; gap: 2px; }
+  .view-toggle button {
+    width: 38px; height: 32px; border: none; background: transparent;
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #6b6b6b;
+  }
+  .view-toggle button.active { background: #ffffff; color: #1F8A5F; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .search-box {
+    flex: 1; max-width: 340px; display: flex; align-items: center; gap: 10px;
+    background: #ffffff; border: 1px solid #E5E5E5; border-radius: 10px; padding: 9px 14px;
+  }
+  .search-box input {
+    border: none; outline: none; flex: 1; font-size: 14px;
+    background: transparent; color: #222; font-family: inherit;
+  }
+  .search-box input::placeholder { color: #B0B0B0; }
+  .visit-count { color: #6b6b6b; font-size: 14px; }
+  .toolbar-btn, .export-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #ffffff; border: 1px solid #E5E5E5; border-radius: 10px;
+    padding: 9px 16px; font-size: 14px; font-weight: 500; color: #222; cursor: pointer;
+  }
+  .toolbar-spacer { flex: 1; }
+  .add-visit-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #1A1A1A; color: #ffffff; border: none; border-radius: 10px;
+    padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+
+  .show-docs-tab {
+    position: absolute; left: 0; top: 540px;
+    background: #1F8A5F; color: #ffffff;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    padding: 18px 8px; font-weight: 700; font-size: 13px; letter-spacing: 2px;
+    border-radius: 0 8px 8px 0; cursor: pointer; user-select: none;
+  }
+
+  /* Read-view card */
+  .card-row {
+    display: flex; align-items: flex-start; gap: 22px;
+    position: relative; margin-left: 60px;
+  }
+  .timeline-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid #2BA875; background: #ffffff;
+    flex-shrink: 0; margin-top: 38px;
+  }
+  .record-card {
+    flex: 1; border: 1.5px solid #2BA875; border-radius: 12px;
+    background: #ffffff; padding: 26px 32px; min-width: 0;
+  }
+  .rec-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .type-chip {
+    background: #1A1A1A; color: #ffffff; border-radius: 10px;
+    padding: 10px 18px; font-size: 15px; font-weight: 600;
+  }
+  .date-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; font-size: 15px; color: #222;
+  }
+  .date-chip .ico { color: #6b6b6b; }
+  .rec-actions { margin-left: auto; display: flex; align-items: center; gap: 14px; }
   .ai-badge {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: #E6F1FB;
-    color: #185FA5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-    font-style: italic;
+    color: #3B82F6; font-size: 22px; font-style: italic; font-weight: 700;
+    font-family: Georgia, serif; letter-spacing: -1px; line-height: 1;
+    position: relative; padding-right: 8px;
+  }
+  .ai-badge::after {
+    content: "★"; color: #3B82F6; font-size: 9px;
+    position: absolute; top: 0; right: 0;
   }
   .confidence-pill {
-    border: 1px solid #1D9E75;
-    border-radius: 9999px;
-    padding: 5px 14px;
-    font-size: 13px;
-    color: #0F6E56;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
+    border: 1.5px solid #2BA875; border-radius: 9999px;
+    padding: 7px 16px; font-size: 14px; color: #1F8A5F;
+    display: flex; align-items: center; gap: 8px; font-weight: 600; background: #ffffff;
   }
-  .confidence-pill .ti { font-size: 15px; }
+  .icon-btn {
+    width: 30px; height: 30px; border: none; background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 6px; transition: background 0.15s;
+  }
+  .icon-btn:hover { background: #F2F2F2; }
+  .icon-btn.edit { color: #4a4a4a; }
+  .icon-btn.delete { color: #E85D4E; }
+
+  .body-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 14px; font-size: 15px; color: #222;
+  }
+  .body-row .ico { color: #6b6b6b; margin-top: 2px; }
+  .body-row .row-label { color: #6b6b6b; font-weight: 600; margin-right: 2px; }
+  .desc-label { font-size: 15px; color: #6b6b6b; margin: 18px 0 10px; }
+  .bullet-list { list-style: none; padding: 0; margin: 0 0 14px; }
+  .bullet-list li {
+    position: relative; padding-left: 22px; margin-bottom: 12px;
+    line-height: 1.65; color: #222; font-size: 15px;
+  }
+  .bullet-list li::before {
+    content: "•"; position: absolute; left: 6px; top: 0; color: #222; font-size: 18px;
+  }
+  .bullet-label { font-weight: 500; }
+  .view-more { color: #1F8A5F; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 4px; }
+  .card-foot {
+    display: flex; align-items: center; margin-top: 24px; padding-top: 20px;
+    border-top: 1px solid #ECECEC; gap: 16px;
+  }
+  .file-ref { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4a4a4a; }
+  .file-ref .ico { color: #6b6b6b; }
+  .pages-label { color: #6b6b6b; margin-left: 8px; }
+  .pages-val { color: #2563EB; font-weight: 600; }
+  .view-details {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+    color: #222; font-weight: 600; font-size: 14px; cursor: pointer;
+  }
+
+  /* ============================================== */
+  /* ============ EDIT VIEW LAYOUT ================ */
+  /* ============================================== */
+
+  .draft-bar { padding: 26px 28px 0; border-bottom: 1px solid #ECECEC; }
+  .draft-tab {
+    display: inline-block; color: #1F8A5F; font-size: 16px; font-weight: 600;
+    padding-bottom: 14px; border-bottom: 3px solid #1F8A5F; margin-bottom: -1px;
+  }
+
+  .split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 200px);
+  }
+
+  .pdf-side {
+    border-right: 1px solid #ECECEC;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .pdf-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px 12px;
+  }
+  .pdf-title { font-size: 15px; font-weight: 600; color: #222; }
+  .pdf-close { cursor: pointer; color: #6b6b6b; }
+
+  .pdf-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 24px 14px; color: #4a4a4a;
+  }
+  .pdf-toolbar button {
+    background: transparent; border: none; color: #4a4a4a;
+    cursor: pointer; padding: 6px;
+    display: flex; align-items: center; justify-content: center; border-radius: 4px;
+  }
+  .pdf-toolbar button:hover { background: #F2F2F2; }
+  .page-input { display: flex; align-items: center; gap: 6px; margin-left: 8px; }
+  .page-input input {
+    width: 42px; border: 1px solid #D9D9D9; border-radius: 4px;
+    padding: 4px 8px; font-size: 14px; text-align: center; font-family: inherit;
+  }
+  .page-input span { font-size: 14px; color: #4a4a4a; }
+
+  .pdf-body { display: flex; flex: 1; overflow: hidden; }
+  .pdf-sidebar-icons {
+    width: 44px; padding: 8px 0;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    border-right: 1px solid #F0F0F0; flex-shrink: 0;
+  }
+  .pdf-sidebar-icons button {
+    background: transparent; border: none; color: #4a4a4a; cursor: pointer; padding: 6px;
+    display: flex; align-items: center; justify-content: center; border-radius: 4px;
+  }
+  .pdf-viewport {
+    flex: 1; overflow-y: auto; padding: 14px 32px 80px; background: #ffffff;
+  }
+  .pdf-page {
+    background: #ffffff; border: 1px solid #E5E5E5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 24px 28px; margin-bottom: 18px;
+    font-size: 9px; line-height: 1.4; color: #222;
+  }
+  .pdf-page-header { text-align: center; margin-bottom: 14px; }
+  .pdf-page-header .caduceus { font-size: 16px; color: #4a4a4a; }
+  .pdf-page-header h1 {
+    font-family: "Times New Roman", serif; font-style: italic; font-weight: bold;
+    font-size: 14px; margin: 2px 0 4px; letter-spacing: 0.5px;
+  }
+  .pdf-page-header .addr { font-size: 7px; color: #333; line-height: 1.3; }
+  .pdf-section-title { text-align: center; font-weight: bold; margin: 10px 0 6px; font-size: 10px; }
+  .pdf-page p { margin: 4px 0; font-size: 9px; }
+  .pdf-page strong { font-weight: bold; }
+  .redacted { display: inline-block; background: #1a1a1a; color: #1a1a1a; height: 9px; vertical-align: middle; }
+  .redacted-block { display: block; background: #1a1a1a; height: 38px; margin: 4px 0; width: 100%; }
+  .pdf-page-foot { display: flex; justify-content: space-between; font-size: 8px; color: #444; margin-top: 8px; }
+
+  .hide-docs-tab {
+    position: absolute; right: -22px; top: 220px;
+    background: #1F8A5F; color: #ffffff;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    padding: 18px 6px; font-weight: 700; font-size: 13px; letter-spacing: 2px;
+    border-radius: 8px 0 0 8px; cursor: pointer; user-select: none; z-index: 10;
+  }
+
+  /* Right side of edit view */
+  .edit-side { padding: 18px 24px 80px; overflow-y: auto; }
+
+  .edit-side .section-head { margin-bottom: 18px; }
+  .edit-side .seg-tab { font-size: 17px; padding-bottom: 6px; }
+  .edit-side .seg-tab.active { border-bottom: 2px solid #1F8A5F; }
+  .edit-side .modified-bar { padding: 12px 18px; font-size: 13px; margin-bottom: 18px; }
+  .edit-side .toolbar { gap: 10px; margin-bottom: 22px; }
+  .edit-side .view-toggle button { width: 34px; height: 28px; }
+  .edit-side .search-box { padding: 7px 12px; min-width: 180px; max-width: 280px; }
+  .edit-side .search-box input { font-size: 13px; }
+  .edit-side .visit-count { font-size: 13px; }
+  .edit-side .toolbar-btn, .edit-side .export-btn { padding: 7px 12px; font-size: 13px; }
+  .edit-side .add-visit-btn { padding: 8px 16px; font-size: 13px; }
+  .edit-side .ver-btn { padding: 8px 14px; font-size: 13px; }
+
+  .edit-card-row { display: flex; align-items: flex-start; gap: 14px; }
+  .edit-timeline-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid #2BA875; background: #ffffff;
+    flex-shrink: 0; margin-top: 28px;
+  }
+  .edit-card { flex: 1; min-width: 0; }
+
+  .form-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+  .field { position: relative; flex: 1; }
+  .field-label {
+    position: absolute; top: -7px; left: 12px; background: #ffffff;
+    padding: 0 6px; font-size: 11px; color: #6b6b6b; z-index: 1;
+  }
+  .field-input {
+    border: 1px solid #D9D9D9; border-radius: 10px;
+    padding: 11px 14px; font-size: 14px; background: #ffffff;
+    display: flex; justify-content: space-between; align-items: center;
+    color: #222; min-height: 44px;
+  }
+  .field-input .cal { color: #9a9a9a; }
+  .date-field-wrap { width: 200px; flex: 0 0 200px; }
+
+  .ai-cluster { display: flex; align-items: center; gap: 8px; margin-top: 6px; margin-left: auto; }
+  .edit-side .ai-badge { font-size: 18px; }
+  .edit-side .confidence-pill { padding: 5px 13px; font-size: 13px; }
   .action-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    border: none;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; border: none; cursor: pointer; padding: 0;
   }
-  .action-btn .ti { font-size: 14px; }
-  .accept { background: #1D9E75; }
-  .reject { background: #E24B4A; }
+  .accept { background: #2BA875; }
+  .reject { background: #E85D4E; }
 
-  .section-label {
-    font-size: 12px;
-    color: #6b6b6b;
-    margin-bottom: 6px;
-  }
-  .description-box {
-    border: 0.5px solid rgba(0,0,0,0.15);
-    border-radius: 8px;
-    padding: 16px 20px;
-    line-height: 1.7;
-    background: #ffffff;
-    margin-bottom: 20px;
-  }
-  .description-box div { margin-bottom: 4px; }
-  .description-box div:last-child { margin-bottom: 0; }
+  .icon-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .icon-leading { color: #6b6b6b; margin-top: 14px; flex-shrink: 0; }
 
-  .nested-panel {
-    background: #F1F4F1;
-    border-radius: 8px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
+  .edit-desc-label { font-size: 13px; color: #6b6b6b; margin: 14px 0 8px; }
+  .desc-box {
+    border: 1px solid #E5E5E5; border-radius: 10px;
+    padding: 16px 18px; background: #ffffff;
+    line-height: 1.7; max-height: 320px; overflow-y: auto;
+    font-size: 14px; color: #222;
   }
+  .desc-box div { margin-bottom: 6px; }
 
-  .issue-field {
-    position: relative;
-    margin-bottom: 18px;
-  }
-  .issue-field .field-label { background: #F1F4F1; }
-  .issue-field .field-input {
-    border: 1px solid #1a1a1a;
-  }
+  .page-ref-row { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+  .page-ref { position: relative; width: 130px; }
+  .page-ref .field-input { padding: 8px 12px; font-size: 13px; min-height: auto; }
 
-  .date-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 18px;
-  }
-  .date-grid .section-label { margin-bottom: 8px; }
+  /* Mode visibility */
+  body.mode-edit .read-view { display: none; }
+  body:not(.mode-edit) .edit-view { display: none; }
+  body.mode-edit .sidebar { display: none; }
+  body.mode-edit .main { padding: 18px 0 0; }
+  body.mode-edit .topbar { padding: 0 28px; }
 
-  .negligence-box {
-    border: 0.5px solid rgba(0,0,0,0.15);
-    border-radius: 8px;
-    padding: 16px 20px;
-    background: #ffffff;
-    min-height: 100px;
+  @media (max-width: 1100px) {
+    .sidebar { width: 80px; }
+    .main { padding: 18px 18px 60px; }
+    .card-row { margin-left: 28px; }
+    .record-card { padding: 20px 18px; }
+    .split { grid-template-columns: 1fr; }
+    .pdf-side { border-right: none; border-bottom: 1px solid #ECECEC; }
+    .hide-docs-tab { display: none; }
   }
-
-  .footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    padding-top: 8px;
-  }
-  .file-ref {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #444;
-    flex: 1;
-    min-width: 0;
-  }
-  .file-ref .ti { font-size: 17px; color: #6b6b6b; }
-  .file-ref span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .page-ref {
-    position: relative;
-    width: 140px;
-  }
-  .page-ref .field-label { background: #ffffff; }
-  .page-ref .field-input {
-    padding: 10px 14px;
-    font-size: 14px;
-    min-height: auto;
-  }
-  .hard-to-read {
-    border: 1px solid #B5D4F4;
-    color: #185FA5;
-    background: #E6F1FB;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .hard-to-read .ti { font-size: 16px; }
-
-  @media (max-width: 720px) {
-    body { padding: 16px 12px; }
-    .card { padding: 18px 16px; }
-    .row { flex-wrap: wrap; }
-    .date-field { width: 100%; }
-    .ai-cluster { margin-top: 4px; flex-wrap: wrap; }
-    .date-grid { grid-template-columns: 1fr; }
-    .footer { flex-wrap: wrap; }
-    .page-ref { width: 100%; }
+  @media (max-width: 760px) {
+    .toolbar { gap: 8px; }
+    .toolbar-spacer { display: none; }
+    .rec-actions { flex-wrap: wrap; }
+    .show-docs-tab { display: none; }
   }
 </style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-folder-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v3"/><path d="M3 7v11a2 2 0 0 0 2 2h7"/><path d="M18.4 14.6a2.1 2.1 0 1 1 3 3L15 24l-4 1 1-4 6.4-6.4z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+    <symbol id="i-books" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4v16H5z"/><path d="M11 4h4v16h-4z"/><path d="M16 5l3.5.9-3.5 13.6"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5a6 6 0 0 0 12 0v-5"/><path d="M22 9v5"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 3.5"/><line x1="12" y1="17" x2="12" y2="17.01"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><line x1="8.2" y1="11" x2="15.8" y2="7"/><line x1="8.2" y1="13" x2="15.8" y2="17"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v2H9z"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-chev-left-pipe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="5" x2="6" y2="19"/><polyline points="18 6 10 12 18 18"/></symbol>
+    <symbol id="i-user-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a6 6 0 0 1 11 0"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 4 21 4 14 13 14 20 10 20 10 13 3 4"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"/><polyline points="3 8 7 4 11 8"/><path d="M17 20V4"/><polyline points="13 16 17 20 21 16"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 20h14"/></symbol>
+    <symbol id="i-chev-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4z"/><path d="M14 6l4 4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 20 7"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M5 7l1 13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><line x1="9" y1="7" x2="11" y2="7"/><line x1="13" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="11" y2="11"/><line x1="13" y1="11" x2="15" y2="11"/><path d="M11 21v-4h2v4"/></symbol>
+    <symbol id="i-id-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6.5 16a3 3 0 0 1 5 0"/><line x1="14" y1="10" x2="18" y2="10"/><line x1="14" y1="14" x2="18" y2="14"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><polyline points="14 3 14 8 19 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-bear" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="17" r="10" fill="#8B5A3C"/><circle cx="8" cy="10" r="3.5" fill="#8B5A3C"/><circle cx="24" cy="10" r="3.5" fill="#8B5A3C"/><circle cx="8" cy="10" r="1.5" fill="#D9B08C"/><circle cx="24" cy="10" r="1.5" fill="#D9B08C"/><ellipse cx="16" cy="20" rx="5" ry="4" fill="#D9B08C"/><circle cx="13" cy="15" r="1.2" fill="#1a1a1a"/><circle cx="19" cy="15" r="1.2" fill="#1a1a1a"/><ellipse cx="16" cy="19" rx="1.4" ry="1" fill="#1a1a1a"/></symbol>
+    <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></symbol>
+    <symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></symbol>
+    <symbol id="i-skip-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="6" x2="5" y2="18"/><polyline points="18 6 9 12 18 18"/></symbol>
+    <symbol id="i-skip-fwd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="6" x2="19" y2="18"/><polyline points="6 6 15 12 6 18"/></symbol>
+    <symbol id="i-zoom-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></symbol>
+    <symbol id="i-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="11" height="14" rx="1"/><path d="M5 7v12a2 2 0 0 0 2 2h9"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v17l-6-4-6 4z"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></symbol>
+    <symbol id="i-x-thick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+  </defs>
+</svg>
 </head>
 <body>
-  <div class="page">
-    <div class="card">
-      <div class="status-dot" aria-hidden="true"></div>
 
-      <div class="content">
+  <div class="app">
 
-        <!-- Record type + date + AI controls -->
-        <div class="row">
-          <div class="field">
-            <label class="field-label">Record Type</label>
-            <div class="field-input">Admission Record</div>
+    <!-- ============== SIDEBAR (read view only) ============== -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-mark">A<span class="i-accent">i</span></div>
+        <div class="logo-sub">Anytime AI</div>
+      </div>
+      <div class="nav-item active">
+        <svg class="ico" width="22" height="22"><use href="#i-folder-pencil"/></svg>
+        Case Hub
+      </div>
+      <div class="nav-item">
+        <svg class="ico" width="22" height="22"><use href="#i-database"/></svg>
+        Knowledge<br>Database
+      </div>
+      <div class="nav-item">
+        <svg class="ico" width="22" height="22"><use href="#i-books"/></svg>
+        Prompt<br>Library
+      </div>
+      <div class="nav-item">
+        <svg class="ico" width="22" height="22"><use href="#i-school"/></svg>
+        Academy
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="account">
+        <span class="free-tag">Free</span>
+        <div class="avatar">R</div>
+        Account
+      </div>
+      <div class="nav-item" style="padding: 6px 8px;">
+        <svg class="ico" width="22" height="22"><use href="#i-help"/></svg>
+        Need Help
+      </div>
+    </aside>
+
+    <!-- ============== MAIN ============== -->
+    <main class="main">
+
+      <!-- Top bar -->
+      <div class="topbar">
+        <button class="legacy-btn">
+          <svg class="ico" width="16" height="16"><use href="#i-arrow-left"/></svg>
+          Go to Legacy View
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="nh-chip">
+          <div class="briefcase">
+            <svg class="ico" width="17" height="17"><use href="#i-briefcase"/></svg>
           </div>
-          <div class="field date-field">
-            <div class="field-input">
-              <span>01/13/2022</span>
-              <i class="ti ti-calendar" aria-hidden="true"></i>
-            </div>
+          <span>NH - 19</span>
+          <button class="share-btn">
+            <svg class="ico" width="14" height="14"><use href="#i-share"/></svg>
+            Share
+          </button>
+        </div>
+        <div class="tab-chip">
+          <div class="teddy-avatar">
+            <svg class="ico" width="22" height="22"><use href="#i-bear"/></svg>
           </div>
-          <div class="ai-cluster">
-            <div class="ai-badge">Ai</div>
-            <div class="confidence-pill">
-              <i class="ti ti-info-circle" aria-hidden="true"></i>
-              <span>Confidence: High</span>
-            </div>
-            <button class="action-btn accept" aria-label="Accept">
-              <i class="ti ti-check" aria-hidden="true"></i>
+          Talk to Teddy
+        </div>
+        <div class="tab-chip active">
+          <div class="tab-icon-square">
+            <svg class="ico" width="15" height="15"><use href="#i-clipboard"/></svg>
+          </div>
+          Medical Chronolo...
+          <svg class="ico tab-close" width="16" height="16"><use href="#i-x"/></svg>
+        </div>
+      </div>
+
+      <!-- ============== READ VIEW ============== -->
+      <div class="read-view">
+
+        <div class="section-head">
+          <div class="seg-tabs">
+            <div class="seg-tab active">Medical Chronology</div>
+            <div class="seg-tab">Timeline</div>
+          </div>
+          <div class="version-btns">
+            <button class="ver-btn">
+              <svg class="ico" width="16" height="16"><use href="#i-chev-left-pipe"/></svg>
+              View Previous Version
             </button>
-            <button class="action-btn reject" aria-label="Reject">
-              <i class="ti ti-x" aria-hidden="true"></i>
-            </button>
+            <button class="ver-btn">View Latest Version</button>
           </div>
         </div>
 
-        <!-- Facility -->
-        <div class="with-icon" style="margin-bottom: 16px;">
-          <i class="ti ti-building icon-leading" aria-hidden="true"></i>
-          <div class="field" style="flex:1;">
-            <label class="field-label">Facility</label>
-            <div class="field-input">Canyon Vista Post-Acute</div>
-          </div>
+        <div class="modified-bar">
+          <svg class="ico" width="17" height="17" style="color:#6b6b6b"><use href="#i-user-circle"/></svg>
+          <span class="label">Last modified by:</span>
+          <span class="value">Rana Junaid</span>
+          <span class="dot-sep"></span>
+          <svg class="ico" width="16" height="16" style="color:#6b6b6b"><use href="#i-clock"/></svg>
+          <span class="value">19 May 2026 11:03 AM</span>
         </div>
 
-        <!-- Doctor / Provider -->
-        <div class="with-icon" style="margin-bottom: 20px;">
-          <i class="ti ti-id-badge-2 icon-leading" aria-hidden="true"></i>
-          <div class="field" style="flex:1;">
-            <label class="field-label">Doctor/Provider</label>
-            <div class="field-input">Sundeep Dabra, MD; Lubna Javed, MD; John Arcay, NP; Samantha Balsomo, NP; Roger Patricio Jr., NP</div>
+        <div class="toolbar">
+          <div class="view-toggle">
+            <button class="active"><svg class="ico" width="18" height="18"><use href="#i-grid"/></svg></button>
+            <button><svg class="ico" width="18" height="18"><use href="#i-list"/></svg></button>
           </div>
-        </div>
-
-        <!-- Description -->
-        <div class="section-label">Description</div>
-        <div class="description-box">
-          <div>- Admission Face Sheet documenting initiation of care on 01/13/2022.</div>
-          <div>- Admitted from Acute care hospital.</div>
-          <div>- Active Diagnoses established on admission: Hypertensive emergency (Primary), Pneumonia, Acute kidney failure, End stage renal disease, Angioneurotic edema, Essential (primary) hypertension, Muscle weakness (generalized), Other abnormalities of gait and mobility, Anxiety disorder, Obesity.</div>
-          <div>- No known allergies.</div>
-        </div>
-
-        <!-- Nested panel: Issue Category, dates, negligence -->
-        <div class="nested-panel">
-
-          <div class="field issue-field">
-            <label class="field-label">Issue Category</label>
-            <div class="field-input">
-              <span>Background | Chronic Illness | Acute Illness</span>
-              <i class="ti ti-x" aria-hidden="true"></i>
-            </div>
+          <div class="search-box">
+            <svg class="ico" width="17" height="17" style="color:#9a9a9a"><use href="#i-search"/></svg>
+            <input type="text" placeholder="Search by keywords...">
           </div>
-
-          <div class="date-grid">
-            <div>
-              <div class="section-label">Start Effective Date</div>
-              <div class="field-input">
-                <span>01/13/2022</span>
-                <i class="ti ti-calendar" aria-hidden="true"></i>
-              </div>
-            </div>
-            <div>
-              <div class="section-label">End Effective Date</div>
-              <div class="field-input placeholder">
-                <span>MM/DD/YYYY</span>
-                <i class="ti ti-calendar" aria-hidden="true"></i>
-              </div>
-            </div>
-            <div>
-              <div class="section-label">Signed Date</div>
-              <div class="field-input placeholder">
-                <span>MM/DD/YYYY</span>
-                <i class="ti ti-calendar" aria-hidden="true"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="section-label">Negligence</div>
-          <div class="negligence-box">No negligence identified</div>
-        </div>
-
-        <!-- Footer: file, page ref, hard-to-read -->
-        <div class="footer">
-          <div class="file-ref">
-            <i class="ti ti-file-text" aria-hidden="true"></i>
-            <span>CVPA MR_00596-01389_NH records from Canyon Vista Post-Acute - redacted.pdf</span>
-          </div>
-          <div class="field page-ref">
-            <label class="field-label">Page Reference</label>
-            <div class="field-input">598-600</div>
-          </div>
-          <button class="hard-to-read">
-            <i class="ti ti-info-circle" aria-hidden="true"></i>
-            Hard-to-Read Pages
+          <span class="visit-count">(13 visits)</span>
+          <button class="toolbar-btn"><svg class="ico" width="16" height="16"><use href="#i-filter"/></svg>Filters</button>
+          <button class="toolbar-btn"><svg class="ico" width="16" height="16"><use href="#i-sort"/></svg>Sort</button>
+          <div class="toolbar-spacer"></div>
+          <button class="export-btn">
+            <svg class="ico" width="16" height="16"><use href="#i-download"/></svg>
+            Export
+            <svg class="ico" width="14" height="14"><use href="#i-chev-down"/></svg>
+          </button>
+          <button class="add-visit-btn">
+            <svg class="ico" width="16" height="16" style="color:#fff"><use href="#i-plus"/></svg>
+            Add Visit
           </button>
         </div>
 
+        <div class="show-docs-tab" id="showDocsBtn">SHOW DOCS</div>
+
+        <div class="card-row">
+          <div class="timeline-dot"></div>
+          <div class="record-card">
+
+            <div class="rec-header">
+              <div class="type-chip">Doctor's Office Record</div>
+              <div class="date-chip">
+                <svg class="ico" width="18" height="18"><use href="#i-calendar"/></svg>
+                09/21/2021
+              </div>
+              <div class="rec-actions">
+                <span class="ai-badge">Ai</span>
+                <div class="confidence-pill">
+                  <svg class="ico" width="16" height="16" style="color:#1F8A5F"><use href="#i-info"/></svg>
+                  Confidence: High
+                </div>
+                <button class="icon-btn edit" id="editBtn" title="Edit">
+                  <svg class="ico" width="19" height="19"><use href="#i-pencil"/></svg>
+                </button>
+                <button class="icon-btn delete" title="Delete">
+                  <svg class="ico" width="19" height="19"><use href="#i-trash"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-building"/></svg>
+              <div><span class="row-label">Facility:</span> Naturo-Medical Health Care, P.C.</div>
+            </div>
+
+            <div class="body-row">
+              <svg class="ico" width="18" height="18"><use href="#i-id-badge"/></svg>
+              <div><span class="row-label">Provider:</span> Tsai C. Chao, MD</div>
+            </div>
+
+            <div class="desc-label">Description</div>
+            <ul class="bullet-list">
+              <li><span class="bullet-label">chief complaint:</span> Acute onset of lower back, left buttock, hip, right knee, and left leg pain with impaired walking after an automobile accident.</li>
+              <li><span class="bullet-label">history of present illness:</span> Patient reports pain in lower back, left buttock, left hip, right knee, and left leg. Previous evaluation included right knee X-ray showing no fracture or dislocation, with advice for pain management.</li>
+              <li><span class="bullet-label">vitals:</span> BP 104/80, HR 75, Respiration 17.</li>
+              <li><span class="bullet-label">clinical narrative:</span> Lower back exam shows midline deformity, tenderness, muscle spasm, and sacroiliac joint tenderness. Positive Faber-Patrick and straight leg elevation tests on the left. Neurological exam reveals decreased muscle strength and sensation in the left leg and foot. Left hip exam shows severe tenderness. Right knee exam reveals crepitus, swelling, tenderness, and positive McMurray's sign. Healing abrasion on the left leg. Right knee X-ray shows no acute injury.</li>
+              <li><span class="bullet-label">assessment:</span> 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4. Left hip joint sprain. 5. Right knee contusion/sprain. 6. Left leg soft tissue contusion. 7. Impaired walking.</li>
+              <li><span class="bullet-label">treatment/plan:</span> Lumbar spine X-ray requested. Left hip and right knee X-ray and MRI ordered. Home heating pad advised. Prescribed Mobic and Lidoderm patch. Physical therapy ordered,...</li>
+            </ul>
+
+            <div class="view-more">View more</div>
+
+            <div class="card-foot">
+              <div class="file-ref">
+                <svg class="ico" width="17" height="17"><use href="#i-file"/></svg>
+                Dr. Office 1_Redacted.pdf
+                <span class="pages-label">Pages:</span>
+                <span class="pages-val">1-3</span>
+              </div>
+              <div class="view-details">
+                <svg class="ico" width="18" height="18"><use href="#i-eye"/></svg>
+                View Details
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
+      <!-- ============== END READ VIEW ============== -->
+
+
+      <!-- ============== EDIT VIEW ============== -->
+      <div class="edit-view">
+
+        <div class="draft-bar">
+          <span class="draft-tab">Medical Chron &amp; Timeline Draft</span>
+        </div>
+
+        <div class="split">
+
+          <!-- LEFT: PDF VIEWER -->
+          <div class="pdf-side">
+
+            <div class="pdf-header">
+              <span class="pdf-title">Dr. Office 1_Redacted.pdf</span>
+              <svg class="ico pdf-close" id="pdfCloseBtn" width="18" height="18"><use href="#i-x"/></svg>
+            </div>
+
+            <div class="pdf-toolbar">
+              <button><svg class="ico" width="18" height="18"><use href="#i-skip-back"/></svg></button>
+              <button><svg class="ico" width="18" height="18"><use href="#i-chev-left"/></svg></button>
+              <button><svg class="ico" width="18" height="18"><use href="#i-chev-right"/></svg></button>
+              <button><svg class="ico" width="18" height="18"><use href="#i-skip-fwd"/></svg></button>
+              <div class="page-input">
+                <input type="text" value="1">
+                <span>of 3</span>
+              </div>
+              <button><svg class="ico" width="18" height="18"><use href="#i-zoom-out"/></svg></button>
+              <button><svg class="ico" width="18" height="18"><use href="#i-zoom-in"/></svg></button>
+              <div style="flex:1"></div>
+              <button><svg class="ico" width="18" height="18"><use href="#i-chev-down"/></svg></button>
+            </div>
+
+            <div class="pdf-body">
+              <div class="pdf-sidebar-icons">
+                <button><svg class="ico" width="20" height="20"><use href="#i-pages"/></svg></button>
+                <button><svg class="ico" width="20" height="20"><use href="#i-bookmark"/></svg></button>
+                <button><svg class="ico" width="20" height="20"><use href="#i-sidebar"/></svg></button>
+              </div>
+
+              <div class="pdf-viewport">
+                <div class="pdf-page">
+                  <div class="pdf-page-header">
+                    <div class="caduceus">⚕</div>
+                    <h1>NATURO-MEDICAL HEALTH CARE, P.C.</h1>
+                    <div class="addr">
+                      39 EAST 20<sup>TH</sup> STREET, NEW YORK, NY 10003 &nbsp; TEL: (212)473-9155 &nbsp; FAX: (212)777-6522<br>
+                      2 ALLEN STREET, 5B, NEW YORK, NY 10002 &nbsp; TEL: (212)566-4887 &nbsp; FAX: (212)566-4882<br>
+                      42-65 KISSENA BLVD., FLUSHING, NY 11355 &nbsp; TEL: (718)461-1365 &nbsp; FAX: (718)461-5201
+                    </div>
+                  </div>
+                  <p><strong>Patient Name:</strong> <span class="redacted" style="width:120px"></span></p>
+                  <p><strong>Date of Accident:</strong> <span class="redacted" style="width:90px"></span></p>
+                  <p><strong>Medical record Number:</strong></p>
+                  <p><strong>Date of initial visit:</strong> 09/21/2021</p>
+
+                  <div class="pdf-section-title">NARRATIVE REPORT</div>
+                  <div class="pdf-section-title">HISTORY</div>
+
+                  <p><strong>Chief Complaints:</strong></p>
+                  <p>The patient came for evaluation and treatment of acute onset of lower back, left buttock and hip, right knee, and left leg pain with impaired walking since an automobile accident <span class="redacted" style="width:60px"></span></p>
+
+                  <p><strong>History of Present Illness:</strong></p>
+                  <div class="redacted-block"></div>
+                  <p><span class="redacted" style="width:140px"></span> She has developed lower back, left buttock, left hip, right knee, and left leg pain. She went to NYC Virtual Urgent Care Pamphlet for evaluation and had X-ray of the right knee which was said to have no fracture of dislocation. She was advised to take Tylenol for pain. Because of persistent symptoms, she came to this office for reevaluation and treatment.</p>
+
+                  <p><strong>Past Medical History:</strong></p>
+                  <p>The patient's had no significant past medical history except that she was found to have elevated blood pressure at the time of this urgent visit. The blood pressure was 127/92 mmHg and her heart rate was 93 per minute. She was otherwise previously healthy and free from other major medical condition. She denied history of diabetes, hypertension, hypercholesterolemia, or coronary artery heart disease. There was no history of motor vehicle accident, work related injury, or other major trauma. There was no history of surgical procedure. System review did not reveal conditions involving other part of her body. There was no known drug allergy.</p>
+
+                  <div class="pdf-section-title">PHYSICAL EXAMINATION</div>
+                  <p><strong>Physical Examination at the Time of the Initial Office Visit:</strong></p>
+                  <p>The patient is a well-developed and well-nourished Asian female in stated age of appearance and in no acute distress. She was alert and cooperative. Her blood pressure was 104/80 mmHg, her heart rate was 75/minute, and her respiration was 17/minute. She had normal cephalic head with her eyes, ears, nose, mouth, and throat unremarkable. Her neck was supple with no neck vein distension, carotid bruit, enlarged thyroid, or palpable mass. Her chest was symmetrical with lungs clear to percussion and auscultation. Her heart was with first and second sounds with no murmur. Her abdomen was flat, soft, non-tender, no mass, or organomegaly. The bowel sound</p>
+                </div>
+
+                <div class="pdf-page">
+                  <div class="pdf-page-foot">
+                    <span>Re: <span class="redacted" style="width:120px"></span></span>
+                    <span>09/21/21</span>
+                  </div>
+                  <div class="pdf-page-foot" style="margin-top: 2px;">
+                    <span>Page: 2</span>
+                  </div>
+                  <p style="margin-top: 12px;">was present and was within normal limit. Her extremities were intact with all areas of peripheral pulses palpated and within normal limits.</p>
+                  <p><strong>Examination of the Lower Back:</strong></p>
+                  <p>Examination of the lower back revealed midline deformity with tenderness between L4-5 and L5-S1 spinous processes. There was muscle spasm and tenderness to left lumbosacral paraspinal</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="hide-docs-tab" id="hideDocsBtn">HIDE DOCS</div>
+          </div>
+
+          <!-- RIGHT: EDITABLE CARD -->
+          <div class="edit-side">
+
+            <div class="section-head">
+              <div class="seg-tabs">
+                <div class="seg-tab active">Medical Chronology</div>
+                <div class="seg-tab">Timeline</div>
+              </div>
+              <div class="version-btns">
+                <button class="ver-btn">
+                  <svg class="ico" width="14" height="14"><use href="#i-skip-back"/></svg>
+                  View Previous Version
+                </button>
+                <button class="ver-btn">View Latest Version</button>
+              </div>
+            </div>
+
+            <div class="modified-bar">
+              <svg class="ico" width="16" height="16" style="color:#6b6b6b"><use href="#i-user-circle"/></svg>
+              <span class="label">Last modified by:</span>
+              <span class="value">Rana Junaid</span>
+              <span class="dot-sep"></span>
+              <svg class="ico" width="15" height="15" style="color:#6b6b6b"><use href="#i-clock"/></svg>
+              <span class="value">19 May 2026 11:03 AM</span>
+            </div>
+
+            <div class="toolbar">
+              <div class="view-toggle">
+                <button class="active"><svg class="ico" width="16" height="16"><use href="#i-grid"/></svg></button>
+                <button><svg class="ico" width="16" height="16"><use href="#i-list"/></svg></button>
+              </div>
+              <div class="search-box">
+                <svg class="ico" width="15" height="15" style="color:#9a9a9a"><use href="#i-search"/></svg>
+                <input type="text" placeholder="Search by keywords...">
+              </div>
+              <span class="visit-count">(13 visits)</span>
+              <button class="toolbar-btn"><svg class="ico" width="14" height="14"><use href="#i-filter"/></svg>Filters</button>
+              <button class="toolbar-btn"><svg class="ico" width="14" height="14"><use href="#i-sort"/></svg>Sort</button>
+              <div class="toolbar-spacer"></div>
+              <button class="export-btn">
+                <svg class="ico" width="14" height="14"><use href="#i-download"/></svg>
+                Export
+                <svg class="ico" width="12" height="12"><use href="#i-chev-down"/></svg>
+              </button>
+              <button class="add-visit-btn">
+                <svg class="ico" width="14" height="14" style="color:#fff"><use href="#i-plus"/></svg>
+                Add Visit
+              </button>
+            </div>
+
+            <div class="edit-card-row">
+              <div class="edit-timeline-dot"></div>
+
+              <div class="edit-card">
+
+                <div class="form-row">
+                  <div class="field" style="max-width: 260px;">
+                    <label class="field-label">Record Type</label>
+                    <div class="field-input">Doctor's Office Rec...</div>
+                  </div>
+                  <div class="field date-field-wrap">
+                    <div class="field-input">
+                      <span>09/21/2021</span>
+                      <svg class="ico cal" width="18" height="18"><use href="#i-calendar"/></svg>
+                    </div>
+                  </div>
+                  <div class="ai-cluster">
+                    <span class="ai-badge">Ai</span>
+                    <div class="confidence-pill">
+                      <svg class="ico" width="14" height="14" style="color:#1F8A5F"><use href="#i-info"/></svg>
+                      Confidence: High
+                    </div>
+                    <button class="action-btn accept" id="acceptBtn" title="Accept and close">
+                      <svg class="ico" width="12" height="12"><use href="#i-check"/></svg>
+                    </button>
+                    <button class="action-btn reject" id="rejectBtn" title="Reject and close">
+                      <svg class="ico" width="12" height="12"><use href="#i-x-thick"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="icon-row">
+                  <svg class="ico icon-leading" width="18" height="18"><use href="#i-building"/></svg>
+                  <div class="field">
+                    <label class="field-label">Facility</label>
+                    <div class="field-input">Naturo-Medical Health Care, P.C.</div>
+                  </div>
+                </div>
+
+                <div class="icon-row">
+                  <svg class="ico icon-leading" width="18" height="18"><use href="#i-id-badge"/></svg>
+                  <div class="field">
+                    <label class="field-label">Doctor/Provider</label>
+                    <div class="field-input">Tsai C. Chao, MD</div>
+                  </div>
+                </div>
+
+                <div class="edit-desc-label">Description</div>
+                <div class="desc-box">
+                  <div>-chief complaint: Acute onset of lower back, left buttock, hip, right knee, and left leg pain with impaired walking after an automobile accident.</div>
+                  <div>-history of present illness: Patient reports pain in lower back, left buttock, left hip, right knee, and left leg. Previous evaluation included right knee X-ray showing no fracture or dislocation, with advice for pain management.</div>
+                  <div>-vitals: BP 104/80, HR 75, Respiration 17.</div>
+                  <div>-clinical narrative: Lower back exam shows midline deformity, tenderness, muscle spasm, and sacroiliac joint tenderness. Positive Faber-Patrick and straight leg elevation tests on the left. Neurological exam reveals decreased muscle strength and sensation in the left leg and foot. Left hip exam shows severe tenderness. Right knee exam reveals crepitus, swelling, tenderness, and positive McMurray's sign. Healing abrasion on the left leg. Right knee X-ray shows no acute injury.</div>
+                  <div>-assessment: 1. Post-MVA status. 2. Lumbar sprain/strain, rule out HNP/radiculopathy. 3. Left hip contusion with trochanteric bursitis. 4.</div>
+                </div>
+
+                <div class="page-ref-row">
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a4a4a;">
+                    <svg class="ico" width="15" height="15" style="color:#6b6b6b"><use href="#i-file"/></svg>
+                  </div>
+                  <div class="field page-ref">
+                    <label class="field-label">Page Reference</label>
+                    <div class="field-input">1-3</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+      <!-- ============== END EDIT VIEW ============== -->
+
+    </main>
   </div>
+
+<script>
+  const body = document.body;
+  const editBtn = document.getElementById('editBtn');
+  const pdfCloseBtn = document.getElementById('pdfCloseBtn');
+  const acceptBtn = document.getElementById('acceptBtn');
+  const rejectBtn = document.getElementById('rejectBtn');
+
+  function enterEdit() {
+    body.classList.add('mode-edit');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function exitEdit() {
+    body.classList.remove('mode-edit');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  editBtn.addEventListener('click', enterEdit);
+  pdfCloseBtn.addEventListener('click', exitEdit);
+  acceptBtn.addEventListener('click', exitEdit);
+  rejectBtn.addEventListener('click', exitEdit);
+
+  // Hide docs button collapses the PDF panel; show docs in read mode re-opens edit
+  const hideDocsBtn = document.getElementById('hideDocsBtn');
+  const showDocsBtn = document.getElementById('showDocsBtn');
+  hideDocsBtn.addEventListener('click', exitEdit);
+  showDocsBtn.addEventListener('click', enterEdit);
+</script>
+
 </body>
 </html>
